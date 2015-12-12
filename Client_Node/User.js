@@ -4,9 +4,15 @@
 var readline = require('readline');
 var exports = module.exports={};
 
-var idRegex = /^\d\d\d\d-\d\d\d\d-\d\d\d\d\d$/g;
-var dateRegex = /^\d\d\/\d\d\/\d\d\d\d$/g;
-var emailRegex = /^[\w-][\w-]*@[\w-][\w-]*.[a-zA-Z][a-zA-Z][a-zA-Z]?$/g;
+var idRegex = /^\d{4}-\d{4}-\d{5}$/g;
+function validateDate (date){
+    var re =/^\d{2}([./-])\d{2}\1\d{4}$/;
+    return re.test(date);
+}
+function validateEmail(email) {
+    var re = /(\w+(.)+@\w+(?:\.\w+)+)$/;
+    return re.test(email);
+}
 
 exports.user = {};
 exports.createUser = function (callback) {
@@ -68,8 +74,7 @@ var verifyBirthDate = function(callback){
     console.log("Enter Birthdate: ");
     var rl = readline.createInterface({input: process.stdin});
     rl.on('line', function (input) {
-        if(dateRegex.test(input.trim())) {
-            dateRegex.lastIndex =0 ;
+        if(validateDate(input.trim())) {
             exports.user.bd = input;
             rl.close();
             verifyEmail(callback);
@@ -77,7 +82,6 @@ var verifyBirthDate = function(callback){
         }else {
             console.log("Invalid Date");
             rl.close();
-            dateRegex.lastIndex =0 ;
             verifyBirthDate(callback);
 
             return;
@@ -90,18 +94,15 @@ var verifyEmail = function(callback) {
     console.log("Enter E-mail: ");
     var rl = readline.createInterface({input: process.stdin});
     rl.on('line', function (input) {
-        if (emailRegex.test(input.trim())) {
+        if (validateEmail(input.trim())) {
             exports.user.email = input;
             rl.close();
-            emailRegex.lastIndex=0;
             verifyImage(callback);
 
         } else {
             console.log("Invalid Email");
             rl.close();
-            emailRegex.lastIndex=0;
             verifyEmail(callback);
-
             return;
         }
 
@@ -117,7 +118,6 @@ var verifyImage = function(callback) {
             callback(exports.user);
 
         } else {
-
 
             verifyImage(callback);
             rl.close();

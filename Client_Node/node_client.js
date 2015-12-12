@@ -6,7 +6,7 @@ var readline = require('readline');
 var user = require("./User.js");
 var client = new net.Socket();
 var exists = false;
-client.connect(7000, '127.0.0.1', function () {
+client.connect(399, '127.0.0.1', function () {
 
 });
 var users = [];
@@ -20,7 +20,8 @@ var options = function() {
 
         console.log("1. Add User");
         console.log("2. Search User");
-        console.log("3. Search User");
+        console.log("3. Delete User");
+        console.log("4. Send Email");
         console.log("Option: ");
         var rl = readline.createInterface({input: process.stdin});
         rl.on('line', function (input) {
@@ -38,10 +39,30 @@ var options = function() {
                     rl.close();
                     deleteUser();
                     break;
+                case 4:
+                    rl.close();
+                    sendEmail();
             }
         });
 };
 
+        var sendEmail= function(){
+            var data;
+            console.log("Enter Username");
+            var rl = readline.createInterface({input: process.stdin});
+            rl.on('line', function (input) {
+                data = input.trim();
+                rl.close();
+                console.log("E-mail");
+                var rl1 = readline.createInterface({input: process.stdin});
+                rl1.on('line', function (input) {
+                    client.write(JSON.stringify({tipo: "4", data1:data, data2:input.trim()}));
+                    rl1.close();
+
+                });
+            });
+
+        };
 
         var addUser = function() {
             user.createUser(function (user) {
@@ -69,7 +90,7 @@ var options = function() {
                 rl.close();
 
             });
-        }
+        };
             process.on('uncaughtException', function (err) {
 
                 console.log(err);

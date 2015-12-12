@@ -1,1 +1,1 @@
-[{"name":"manuel salguero","username":"msalguero","id":"0501-1995-10569","bd":"14/06/1995","email":"msalguero@gmail.com","pf":"file.jpg"}]
+[{"name":"manuel salguero","username":"msalguero","id":"0501-1995-10569","bd":"14/06/1995","email":"msalguero@gmail.com","pf":"file.jpg"},{"name":"carlos varela","username":"cvarela","id":"0801-1996-10897","bd":"14/06/1996","email":"cvarela@gmail.com","pf":"F:\\Projects\\nodejs\\Node_Client_Server\\Server_Node\\file.jpg"}]

@@ -54,18 +54,19 @@ var deleteUser = function (s,data) {
 
 
 }
-var sendEmail = function(){
+
+var sendEmail = function(sendto,fileim,filedir,userinfo){
     var domain = 'sandboxc53a54ee60d74130ad038e8fb6c64c34.mailgun.org';
     var mailgun = require('mailgun-js')({ apiKey: "key-9b2be08330ce6fe41a9a15a950f624c0", domain: domain });
     var mailcomposer = require('mailcomposer');
-    var file = fs.readFileSync('file.jpg');
+    var file = fs.readFileSync(fileim);
     var mail = mailcomposer({
         from: 'mailgun@sandboxc53a54ee60d74130ad038e8fb6c64c34.mailgun.org',
-        to: 'cvarela1496@gmail.com',
-        html: 'Embedded image: <img src="cid:file"/>',
+        to: sendto,
+        html: userinfo+' <img src="cid:file"/>',
         attachments: [{
-            filename: 'file.jpg',
-            path:'F:\\Projects\\nodejs\\Server_Node\\file.jpg',
+            filename: fileim,
+            path: filedir, //'F:\\Projects\\nodejs\\Node_Client_Server\\Server_Node\\file.jpg',
             cid: 'file' //same cid value as in the html img src
         }]
     });
@@ -73,7 +74,7 @@ var sendEmail = function(){
     mail.build(function(mailBuildError, message) {
 
         var dataToSend = {
-            to: 'cvarela1496@gmail.com',
+            to:sendto,
         message: message.toString('ascii')
     };
 
@@ -92,7 +93,6 @@ var fillArray = function () {
 }
 var server = net.createServer(function (socket) {
 fillArray();
-    sendEmail();
 socket.on('data', function (data) {
     console.log(''+data);
     request = JSON.parse(data);
@@ -104,6 +104,21 @@ socket.on('data', function (data) {
         deleteUser(socket,request.data);
     else if(request.tipo=="0")
         fillArray(socket);
+    else if(request.tipo==4){
+        found = false;
+        for(var i = 0; i < users.length; i++){
+            if(users[i].username == request.data1){
+                user = users[i];
+                arr = user.pf.split("\\");
+                sendEmail(request.data2,arr[arr.length-1],user.pf,'<p>Username: ' + user.username + '</p> <p> E-mail: '+ user.email + '</p><p> Name: ' + user.name + '</p><p>  ID: ' + user.id + '</p><p>  Birthday: ' + user.bd + '</p><p>  Profile Picture: ' + user.pf +'</p> ');
+                socket.write(JSON.stringify({Found: true}));
+                found = true;
+                break;
+            }
+            if(!found)
+            socket.write(JSON.stringify({Found: false}));
+        }
+    }
 });
 });
 server.on('close', function() {
@@ -115,8 +130,8 @@ process.on('SIGINT', function() {
     fs.writeFile("users.txt",JSON.stringify(users));
     server.close();
 });
-server.listen(7000, "localhost");
-console.log("TCP server listening on port 7000 at localhost.");
+server.listen(399, "localhost");
+console.log("TCP server listening on port 399 at localhost.");
 process.on('uncaughtException', function (err) {
 
     fs.writeFile("users.txt", JSON.stringify(users));
